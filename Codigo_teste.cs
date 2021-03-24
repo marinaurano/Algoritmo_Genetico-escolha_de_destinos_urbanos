@@ -42,12 +42,14 @@ namespace ag_1
             CultureInfo cult = new CultureInfo("pt-BR");
 
             #region algoritmos_iniciais
-            // Declaração de variáveis da rotina principal:
                 
-            string[] lines = System.IO.File.ReadAllLines(@"limites.txt");
+            /* Declaração de variáveis da rotina principal */
+                
+            //Leitura dos limites estabelecidos para cada parâmetro:
+            string[] lines = System.IO.File.ReadAllLines(@"Limites_Cenario1.txt"); /*Atentar-se para o nome do arquivo! Alterar para "Limites_Cenario2.txt" ou Limites_Cenario3.txt, conforme necessidade.*/
+            //Leitura do banco de dados:
             string[] lines2 = System.IO.File.ReadAllLines(@"input.txt");
-            
-            //quantidade de linhas (dados) no arquivo input
+            //Quantidade de linhas (registros) no banco de dados (input.txt):
             Int32 ndados = lines2.Length;
 
             vsolmax = new double[581]; /* 581 = 580 parametros + 1 */
@@ -63,17 +65,21 @@ namespace ag_1
             fomaxg = -1;
             foming = 1000000;
             string st1;
-            //tamano da população,quant de iterações; iteração corrente 
-            //tamanho da população...
+            //Iteração corrente:
             contr = 0;
+            //Tamanho da população:
             npop = 100;
-            alpha = 0.5;//parâmetro do cruzamento
+            //Parâmetro de cruzamento:
+            alpha = 0.5;
+            //Parâmetro de mutação:
             pmut = 0.2;
-            //matrizes que serão utilizadas no AG                    
+            //Matrizes que serão utilizadas no AG:                    
             ms = new double[npop + 1, 581];
             mc = new double[npop + 1, 581];
             mm = new double[npop + 1, 581];
-            // ENTRADA DE DADOS -----------------------------------------
+            
+       //------------------------------------------------------------------------------------------------------------------------------------------
+         
             // lendo os dados contendo os limites de cada parâmetro
             for (var i = 1; i <= 580; i++)
             {
@@ -81,8 +87,6 @@ namespace ag_1
                 string[] vst1 = st1.Split('\t');
                 vlmin[i] = Convert.ToDouble(vst1[0]);
                 vlmax[i] = Convert.ToDouble(vst1[1]);
-               // Console.WriteLine("{0} {1}", vlmin[i].ToString(), vlmax[i].ToString());
-
             }
             
             // lendo a matriz input            
@@ -96,7 +100,7 @@ namespace ag_1
                 //igual a 1 para facilitar no algoritmo da função objetivo.
                 mdados[i, 1] = 1; 
             }
-            Console.WriteLine("Tamanho dos dados:" + ndados);
+            Console.WriteLine("Quantidade de registros:" + ndados);
             Console.WriteLine("Algoritmo Genético aplicado ao problema O/D");
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine("Digite o valor de corte da Função Objetivo");
@@ -134,16 +138,6 @@ namespace ag_1
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine((DateTime.Now.ToString("dd/MM HH:mm", cult)));
             vsolming[0]= foming;
-            /*using (StreamWriter writer = new StreamWriter(@"melhorsolucao.txt"))
-            {
-                foreach (var value in vsolming)
-                {
-                    writer.WriteLine(value);
-                }
-            }
-            Console.WriteLine("A melhor solução encontra-se no arquivo melhorsolucao.txt");
-            Console.WriteLine("Digite ENTER para Fechar");
-            Console.ReadKey();*/
             Console.WriteLine("Ordenando as 100 melhores soluções...");
             ordenando();
             Console.WriteLine("----------------------------------------------");
@@ -154,34 +148,6 @@ namespace ag_1
             Console.WriteLine("As abas terão os nomes no seguinte formato: \"dia_mes_hora_minuto(valor de corte)\" ");
             Console.WriteLine("Digite ENTER para Fechar");
             Console.ReadKey();
-            /*string path = Environment.CurrentDirectory;
-            path += "\\melhores_solucoes.xlsx";
-            ExcelPackage arquivoexcel = new ExcelPackage(new FileInfo(@path));
-            ExcelWorkbook planilha = arquivoexcel.Workbook;            
-            ExcelWorksheet aba;
-            
-            st1 = DateTime.Now.Day.ToString() + "_" + DateTime.Now.Month.ToString() + "_" + DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString();
-            planilha.Worksheets.Add(st1);
-            planilha.Worksheets.MoveToStart(st1);
-            aba = planilha.Worksheets[1];
-            for (var j = 1; j <= 363; j++) aba.Column(j).Width = 20; /* 363 = 361 parametros (19*19) + 2 *//*
-            for (var j = 3; j <= 363; j++) aba.Cells[1,j].Value = "param " + (j - 2).ToString();
-            aba.Cells[1, 1].Value = "Soluções";
-            aba.Cells[1, 2].Value = "F obj";
-            for (var j = 1; j <= 363; j++) aba.Cells[1, j].Style.HorizontalAlignment= OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-            int cont = 1;
-            foreach (DictionaryEntry solucao in listasd)
-            {
-                cont++;
-                aba.Cells[cont, 1].Value = cont-1;
-                solucao.Key.ToString();
-                aba.Cells[cont, 2].Value = Convert.ToDouble(solucao.Key.ToString());
-                st1 = solucao.Value.ToString();
-                string[] vst1 = st1.Split(';');
-                for (var j = 0; j <= 360; j++) aba.Cells[cont, j + 3].Value = Convert.ToDouble(vst1[j]); /* 360 = 361 parametros - 1 *//*
-            }
-            
-            arquivoexcel.Save();*/
 
         }
         static double Fobj(double[] solucao)
