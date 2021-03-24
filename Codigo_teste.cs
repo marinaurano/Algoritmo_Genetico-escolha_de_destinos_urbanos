@@ -17,40 +17,36 @@ namespace ag_1
 {       
     class Program
     {
-        /*---------------------------------------------------------
-        declaração de variáveis globais 
-        usei a notação: inicio com a letra M (matriz) e V (vetor))
-        as variáveis globais são utilizadas na rotina principal e
-        na função contendo a rotina da função objetivo
-        *///---------------------------------------------------------        
-        //matriz contendo os dados de entrada
+        /* Variáveis globais (utilizadas na rotina principal e na função objetivo)
+        Notação: M: matriz; V: vetor */
+        
+        //Matriz contendo os dados de entrada:
         static double[,] mdados = new double[2197, 87]; /* 2197 = 2196 registros + 1; 87 = 86 colunas de dados no input + 1 */
-        // vetor contendo o código final de cada viagem
+        
+        // Vetor contendo o código final de cada viagem:
         static Int32[] vcod = new int[2197];
-        //rotina de entrada ou rotina principal        
-         static double[,] mpi, ms, mc, mm,mfinal;
+        
+        //Rotina principal:        
+        static double[,] mpi, ms, mc, mm,mfinal;
         static double fo,fomax,fomaxg,fomin,fominant,foming,pcruz,pmut,alpha,corte;
         static Int32 tp, nite, ite, npop,imin,imax,cont,contr,nh,h1,h2,duracaoh,ncorte;
         static DateTime inicio, atual,duracao;
         static double[] vsol,vsolt,vlmin,vlmax,vsolmax,vsolmaxg,vsolmin,vsolming;
-        //static Random aleat = new Random(Guid.NewGuid().GetHashCode());
         static Random aleat = new Random((int)DateTime.Now.Ticks);
         static StringDictionary listasd = new StringDictionary();
         static void Main(string[] args)
+            
+        //------------------------------------------------------------------------------------------------------------------------------------------
+            
         {
             CultureInfo cult = new CultureInfo("pt-BR");
-            //string dta = DateTime.Now.ToString("dd/MM HH:mm:ss", cult);
-            /*listasd.Add("2.981", "9 0 8 9");
-            listasd.Add("2.348392", "9 0 4 30");
-            bool teste = false;
-            teste=listasd.ContainsKey("2.981");
 
-            //listasd.Add("2.981", "2");*/
-            //-----------------------------------------------------------
             #region algoritmos_iniciais
-            // DECLARAÇÃO DE VARIÁVEIS DA ROTINA PRINCIPAL-----------
+            // Declaração de variáveis da rotina principal:
+                
             string[] lines = System.IO.File.ReadAllLines(@"limites.txt");
             string[] lines2 = System.IO.File.ReadAllLines(@"input.txt");
+            
             //quantidade de linhas (dados) no arquivo input
             Int32 ndados = lines2.Length;
 
