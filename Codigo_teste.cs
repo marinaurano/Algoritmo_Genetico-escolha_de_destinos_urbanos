@@ -36,7 +36,7 @@ namespace ag_1
         static StringDictionary listasd = new StringDictionary();
         static void Main(string[] args)
             
-        //------------------------------------------------------------------------------------------------------------------------------------------
+       //------------------------------------------------------------------------------------------------------------------------------------------
             
         {
             CultureInfo cult = new CultureInfo("pt-BR");
@@ -80,28 +80,31 @@ namespace ag_1
             
        //------------------------------------------------------------------------------------------------------------------------------------------
          
-            // lendo os dados contendo os limites de cada parâmetro
+            /* Definição dos limites inferior e superior para os parâmetros */
+            
             for (var i = 1; i <= 580; i++)
             {
                 st1 = lines[i - 1];
                 string[] vst1 = st1.Split('\t');
-                vlmin[i] = Convert.ToDouble(vst1[0]);
+                //Vetor contendo os valores mínimos para cada parâmetro:
+                vlmin[i] = Convert.ToDouble(vst1[0]); 
+                //Vetor contendo os valores máximos para cada parâmetro:
                 vlmax[i] = Convert.ToDouble(vst1[1]);
             }
             
-            // lendo a matriz input            
+            /* Definição da matriz contendo os dados do arquivo "input.txt" */      
+            
             for (var i = 1; i <= ndados; i++)
             {
                 st1 = lines2[i - 1];
                 string[] vst1 = st1.Split('#');
-                for (var j = 1; j <= 86; j++) { mdados[i, j] = Convert.ToDouble(vst1[j - 1]); } /*  = colunas de dados */
-                vcod[i] = Convert.ToInt32(mdados[i, 1]);
-                //após passar a primeira coluna para o vetor vcod, coloquei todos os valores
-                //igual a 1 para facilitar no algoritmo da função objetivo.
-                mdados[i, 1] = 1; 
+                for (var j = 1; j <= 86; j++) { mdados[i, j] = Convert.ToDouble(vst1[j - 1]); }
+                vcod[i] = Convert.ToInt32(mdados[i, 1]); //vetor contendo a primeira coluna do banco de dados, referente aos destinos escolhidos
+                mdados[i, 1] = 1; //Após a transferência dos valores da coluna 1 (referente aos destinos escolhidos) para o vetor vcod, essa coluna teve todos os valores alterados para 1, de modo a facilitar a execução da função objetivo do AG.
             }
+            
             Console.WriteLine("Quantidade de registros:" + ndados);
-            Console.WriteLine("Algoritmo Genético aplicado ao problema O/D");
+            Console.WriteLine("Algoritmo Genético aplicado ao problema de escolha de destinos urbanos");
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine("Digite o valor de corte da Função Objetivo");
             corte = Convert.ToDouble(Console.ReadLine());
@@ -109,9 +112,10 @@ namespace ag_1
             Console.WriteLine("Digite ENTER para iniciar e ESC para encerrar o processo");
             Console.ReadKey();            
           
-
             #endregion
 
+       //------------------------------------------------------------------------------------------------------------------------------------------
+         
             //INÍCIO DO AG
             Console.WriteLine("Inicio..");
             Console.WriteLine((DateTime.Now.ToString("dd/MM HH:mm",cult)));
@@ -150,6 +154,7 @@ namespace ag_1
             Console.ReadKey();
 
         }
+        
         static double Fobj(double[] solucao)
         {
             double[,] mp = new double[36, 18]; /* 35 = 34 equacoes completas +1; 18 = 17 parametros especificos +1 */
@@ -163,7 +168,6 @@ namespace ag_1
             double v5, soma, generico, distancia1;
 
             /*PARTE NOVA DO CÓGIGO - LEITURA DAS VARIÁVEIS INCLUÍDAS (1) E EXCLUÍDAS (0)*/
-
                        
             int k = 0;
             for (var i = 2; i <= 35; i++) /*35 = 35 equacoes */
@@ -258,12 +262,10 @@ namespace ag_1
                         for (var j = 1; j <= 580; j++) st1 = st1+mm[i, j].ToString() + ";";
                         listasd.Add(stfo, st1);
                         ncorte++;
-                    }
-                   
-                    
-                    
+                    }                                                      
                 }
             }
+            
             //pegando melhor e pior solução da população
             atualizafoming:
             fomin = mm[1, 0];
@@ -283,9 +285,7 @@ namespace ag_1
                     imax = i;
                 }
             }
-                      
-           
-            
+                                           
             //se aparecer um indivíduo na população atual melhor que todos até então
             //atualiza melhor de todos, caso contrário, joga o melhor de todos 
             //na posição do pior da população atual. Uma espécie de elitismo para um
@@ -329,11 +329,8 @@ namespace ag_1
              * solução até então será inserida em alguma posição (de forma aleatória tb).*/
 
             //escrever aqui...
-            // Console.WriteLine(ite.ToString(), " min/max ", fomin.ToString(), " / ", fomax.ToString(), " ", contr.ToString());
-            //Console.WriteLine("{0} min/max {1}/{2} - {3} - {4}", ite.ToString(), fomin.ToString(), fomax.ToString(), contr.ToString(),foming.ToString());
-            //Console.WriteLine("{0} min/max {1}/{2} - {3}", ite.ToString(), fomin.ToString(), fomax.ToString(), contr.ToString());
+
             Console.WriteLine("{0} min/max {1}/{2} - {3}", ite.ToString(), fomin.ToString(), fomax.ToString(), ncorte.ToString());
-            //texto retirado 1
 
             //seleção do tipo torneio com n=2
 
@@ -387,8 +384,6 @@ namespace ag_1
                     mc[2 * i - 1, j] = genef1;
                     mc[2 * i, j] = genef2;
                 }
-
-
             }
         }
 
@@ -471,12 +466,8 @@ namespace ag_1
             {
                 aba.Cells[i + 1, 1].Value = i;
                 for (var j =0; j <= 580; j++) aba.Cells[i+1, j + 2].Value = mfinal[i, j];
-            }
-                
-                
-
-                
-                   
+            }          
+                                                 
             arquivoexcel.Save();
         }
         
