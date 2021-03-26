@@ -116,7 +116,8 @@ namespace ag_1
 
        //------------------------------------------------------------------------------------------------------------------------------------------
          
-            //INÍCIO DO AG
+            /* Rotina principal do AG */
+                
             Console.WriteLine("Inicio..");
             Console.WriteLine((DateTime.Now.ToString("dd/MM HH:mm",cult)));
             Console.WriteLine("----------------------------------------------");
@@ -133,11 +134,11 @@ namespace ag_1
                 aleat = new Random((int)DateTime.Now.Ticks);
                 selecao();
                 cruzamento();
-                mutacao();
-              
+                mutacao();              
+            } 
 
-            } // fim do loop principal do AG
-
+            /* Fim da rotina principal do AG */
+            
             Console.WriteLine("Fim..");
             Console.WriteLine("----------------------------------------------");
             Console.WriteLine((DateTime.Now.ToString("dd/MM HH:mm", cult)));
@@ -152,12 +153,13 @@ namespace ag_1
             Console.WriteLine("As abas terão os nomes no seguinte formato: \"dia_mes_hora_minuto(valor de corte)\" ");
             Console.WriteLine("Digite ENTER para Fechar");
             Console.ReadKey();
-
         }
+        
+       //------------------------------------------------------------------------------------------------------------------------------------------
         
         static double Fobj(double[] solucao)
         {
-            double[,] mp = new double[36, 18]; /* 35 = 34 equacoes completas +1; 18 = 17 parametros especificos +1 */
+            double[,] mp = new double[36, 18]; /* 35 = 34 equacoes completas + 1; 18 = 17 parametros especificos + 1 */
             double[,] mu = new double[2197, 36]; /* 2197 = 2196 registros + 1; 36 = 35 equacoes + 1 */
             double[] v1 = new double[18]; /* 18 = 17 parametros especificios + 1 */
             double[] v2 = new double[18]; /* 18 = 17 parametros especificos + 1 */
