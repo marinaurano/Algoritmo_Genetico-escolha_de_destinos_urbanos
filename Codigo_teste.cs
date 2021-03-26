@@ -23,7 +23,7 @@ namespace ag_1
         //Matriz contendo os dados de entrada:
         static double[,] mdados = new double[2197, 87]; /* 2197 = 2196 registros + 1; 87 = 86 colunas de dados no input + 1 */
         
-        // Vetor contendo o código final de cada viagem:
+        // Vetor contendo os destinos escolhidos em cada viagem:
         static Int32[] vcod = new int[2197];
         
         //Rotina principal:        
@@ -157,19 +157,21 @@ namespace ag_1
         
        //------------------------------------------------------------------------------------------------------------------------------------------
         
+        /* Funções utilidade e modelo Logit multinomial */
+        
         static double Fobj(double[] solucao)
         {
-            double[,] mp = new double[36, 18]; /* 35 = 34 equacoes completas + 1; 18 = 17 parametros especificos + 1 */
+            double[,] mp = new double[36, 18]; /* 36 = 35 funções utilidade + 1; 18 = 17 parametros especificos + 1 */
             double[,] mu = new double[2197, 36]; /* 2197 = 2196 registros + 1; 36 = 35 equacoes + 1 */
             double[] v1 = new double[18]; /* 18 = 17 parametros especificios + 1 */
             double[] v2 = new double[18]; /* 18 = 17 parametros especificos + 1 */
-            double[] v3 = new double[36]; /* 36 = 35 equacoes + 1 */
-            double[] v4 = new double[36]; /* 36 = 35 equacoes + 1 */
+            double[] v3 = new double[36]; /* 36 = 35 funções utilidade + 1 */
+            double[] v4 = new double[36]; /* 36 = 35 funções utilidade + 1 */
             double[] vprob = new double[2197];
             double sp, somaprob = 0;
             double v5, soma, generico, distancia1;
 
-            /*PARTE NOVA DO CÓGIGO - LEITURA DAS VARIÁVEIS INCLUÍDAS (1) E EXCLUÍDAS (0)*/
+            /* Determinação da matriz de parâmetros considerando as variáveis específicas e genéricas: */
                        
             int k = 0;
             for (var i = 2; i <= 35; i++) /*35 = 35 equacoes */
@@ -180,27 +182,29 @@ namespace ag_1
                     mp[i, j] = solucao[k - 17 + j]; /* 17 = 17 parametros especificos; mp é a matriz com os coeficientes que serão estimados */
                     mp[1, j] = 1;
                 }
-                generico = solucao[580]; /* Para deixar o 18º parametro cte em todas as equacoes (variavel generica). 324 = 19 * 17 + 1 */
-                distancia1 = solucao[579];             
+                generico = solucao[580]; /* Para deixar o 18º parametro cte em todas as equacoes (variavel generica). 580 = 17 * 35 + 2 */
+                distancia1 = solucao[579]; /*579 = 17 * 35 + 1 */            
             }
-            generico = solucao[580]; /* Para deixar o 18º parametro cte em todas as equacoes (variavel generica). 324 = 19 * 17 + 1 */
+            generico = solucao[580];
             distancia1 = solucao[579];
 
+            /* Equacionamento das funções utilidade: */
+            
             for (var i = 1; i <= 2196; i++)
             {
                 var j = 1;
                 if (j == 1)
                 {
                     v5 = mdados[i, (51 + j)];
-                    mu[i, j] = generico * v5 + distancia1 * mdados[i, (16 + j)];
+                    mu[i, j] = generico * v5 + distancia1 * mdados[i, (16 + j)]; /* Função utilidade do destino 1, contendo somente a variável genérica e a variável específica referente À alternativa */
                     j++;
                 }
                 for (j = 2; j <= 35; j++)
                 {
                     {
-                        for (k = 1; k <= 16; k++)                          /* Cria a matriz v1 com os dados que vão ser utilizados em cada equação, inclusive as colunas que entram em uma das equações (variaveis do destino) */
+                        for (k = 1; k <= 16; k++)
                         {
-                            v1[k] = mdados[i, k];
+                            v1[k] = mdados[i, k]; /* Cria o vetor v1 com os dados que vão ser utilizados em cada equação, inclusive as colunas que entram em uma das equações (variaveis do destino) */
                         }
                         k = 17;
                         if (k == 17)
@@ -213,7 +217,7 @@ namespace ag_1
                             v5 = mdados[i, (51 + j)];
                         }
                     }
-                    for (k = 1; k <= 17; k++) { v2[k] = mp[j, k]; } /* Cria a matriz v2 com os coeficientes que serão estimados */
+                    for (k = 1; k <= 17; k++) { v2[k] = mp[j, k]; } /* Cria o vetor v2 com os coeficientes que serão estimados */
                     sp = 0;
                     for (k = 1; k <= 17; k++) { sp = sp + v1[k] * v2[k]; } /* Multiplica a matriz de dados com a matriz de coeficientes.*/
                     if (sp > 100) { sp = 100; }
@@ -223,7 +227,9 @@ namespace ag_1
                 }
             }
 
-            somaprob = 0;
+            /* Verossimilhança: */
+            
+            somaprob = 0; //somaprob = somatório dos logaritmos das probabilidades das alternativas escolhidas
             for (var i = 1; i <= 2196; i++)
             {
                 for (var j = 1; j <= 35; j++) { v3[j] = mu[i, j]; }
@@ -231,12 +237,14 @@ namespace ag_1
                 for (var j = 1; j <= 35; j++) { soma = soma + Math.Exp(v3[j]); }
                 vprob[i] = Math.Exp(mu[i, vcod[i]]) / soma;
                 if (vprob[i] < 0.00000000001) { vprob[i] = 0.00000000001; }
-                somaprob = somaprob + Math.Log(vprob[i]);
+                somaprob = somaprob + Math.Log(vprob[i]); 
             }
 
-            return Math.Abs(somaprob);
-        }
+            return Math.Abs(somaprob); //Retorna o valor absoluto do somaprob. Observe que somaprob é um valor negativo, pois os logaritmos das probabilidades são valores negativos.
+            //Logo, o maior valor de somaprob (máxima verossimilhança) ocorre com o menor valor absoluto de somaprob, que corresponde à função objetivo do AG.
 
+        //------------------------------------------------------------------------------------------------------------------------------------------
+        
         static void selecao()
         {
             Int32 aleat1, aleat2;
