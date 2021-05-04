@@ -249,19 +249,17 @@ namespace ag_1
         {
             Int32 aleat1, aleat2;
             
-            //caso ocorra de uma convergência local, a matriz mm é resetada e o algoritmo 
-            //passa para a linha seguinte "popresetada" por meio do comando goto, verificar 
-            //mais abaixo...
-            //popresetada: 
+            /* Procedimento para resetar a matriz mm caso ocorra uma convergência local */
+
             if (ite>1) { fominant = fomin; }
-            //avaliando cada solução..
+            /* Análise de cada solução */
             for (var i = 1; i <= npop; i++)
             {
                 for (var j = 1; j <= 580; j++) { vsol[j] = mm[i, j]; }
                 fo = Fobj(vsol);                
                 mm[i, 0] = fo;
-                //armazenando as soluções com valores inferiores ao valor de corte
-                if (fo < corte)
+               
+                if (fo < corte) //Armazenamento das soluções com valores inferiores ao valor de corte
                 {
                     string stfo = fo.ToString();
                     bool repetido = false;
@@ -276,11 +274,10 @@ namespace ag_1
                 }
             }
             
-            //pegando melhor e pior solução da população
             atualizafoming:
             fomin = mm[1, 0];
             fomax = mm[1, 0];
-            for (var i = 2; i <= npop; i++)
+            for (var i = 2; i <= npop; i++) //Selecionando a melhor e a pior solução
             {
                 if (mm[i,0]<fomin)
                 {
@@ -296,17 +293,14 @@ namespace ag_1
                 }
             }
                                            
-            //se aparecer um indivíduo na população atual melhor que todos até então
-            //atualiza melhor de todos, caso contrário, joga o melhor de todos 
-            //na posição do pior da população atual. Uma espécie de elitismo para um
-            //indivíduo.
+            /* Elitismo: caso um indivíduo na população atual seja o melhor até então, o melhor de todos é atualizado. Caso contrário, o melhor de todos é colocado na posição de pior da população atual */
            
-            if (fomin<foming)
+            if (fomin<foming) 
             {
                 foming = fomin;
                 for (var j = 1; j <= 580; j++) { vsolming[j] = mm[imin, j]; }
             }            
-            if (fomin>foming)
+            if (fomin>foming)  
             {
                 for (var j = 1; j <= 580; j++) { mm[imax, j]=vsolming[j];}
                 mm[imax, 0] = foming;               
@@ -332,19 +326,11 @@ namespace ag_1
                 goto atualizafoming;
             }
 
-            /* fazendo uma estratégia denominada de reset, se a diferença entre os valores
-             * da função objetivo max e min ficar menor do que 1, significa que a população
-             * está convergindo em um ótimo local. Portanto, se isto se repetir, seguidamente, 
-             * por 50 vezes, será resetada a população ... geradas de forma aleatória e a melhor
-             * solução até então será inserida em alguma posição (de forma aleatória tb).*/
-
-            //escrever aqui...
+            /* Convergência para ótimo local: se a diferença entre os valores de função objetivo max e min forem menores que 1 por 50 vezes consecutivas, a população é resetada e a melhor solução é mantida e inserida em uma posição aleatória */fazendo uma estratégia denominada de reset, se a diferença entre os valores
 
             Console.WriteLine("{0} min/max {1}/{2} - {3}", ite.ToString(), fomin.ToString(), fomax.ToString(), ncorte.ToString());
 
-            //seleção do tipo torneio com n=2
-
-            for (var i = 1; i <= npop; i++)
+            for (var i = 1; i <= npop; i++) /* Seleção do tipo torneio com n = 2 */
             {
                 aleat1 = aleat.Next(1, npop);
                 aleat2 = aleat.Next(1, npop);
@@ -365,27 +351,22 @@ namespace ag_1
        
         static void cruzamento()
         {
-           /*cruzamento do tipo BLX-alpha , alpha adotado 0.5 
-            * segundo a literatura esse é o melhor tipo de cruzamento para 
-            * variáveis reais. Existe um parâmetro beta que pode ser gerado por
-            * indivíduo ou por gene, optei por gene para ficar mais diversificado, 
-            * tendo em vista que os  das variações por variáveis são diferentes.
-            * Adotei cruzamento em 100% dos indivíduos.
-            * Caso um gene ultrapasse os limites, em vez de refazer o cruzamento (pois 
-            * isto deixaria o algoritmo mais lento, coloquei o valor do próprio limite 
-            * caso isto aconteca). */
+           /* Cruzamento do tipo BLX-alpha (melhor cruzamento para variáveis reais), com alpha adotado de 0.5 */
+
+            /* Obs: cruzamento em 100% dos indivíduos.*/
+
             double genep1,genep2,genef1,genef2,beta; //aleatorios reais
-            //= 2 * ALEATÓRIO() - 0,5
+
             for (var i = 1; i <= npop/2; i++)
             {
                 for (var j = 1; j <= 580; j++)
                 {
                     genep1 = ms[2 * i - 1, j];
                     genep2 = ms[2 * i, j];
-                    beta = (1 + 2 * alpha) * aleat.NextDouble() - alpha;
+                    beta = (1 + 2 * alpha) * aleat.NextDouble() - alpha; // Parâmetro beta gerado por gene, para ficar mais diversificado
                     genef1 = beta * genep1 + (1 - beta) * genep2;
                     genef2 = (1 - beta) * genep1 + beta * genep2;
-                    //verificando os limites
+                    /* Verificação dos limites (se um gene ultrapassa os limites, o seu valor passa a ser o do próprio limite */
                     if (genef1 < vlmin[j]) { genef1 = vlmin[j]; }
                     if (genef1 > vlmax[j]) { genef1 = vlmax[j]; }
                     if (genef2 < vlmin[j]) { genef2 = vlmin[j]; }
@@ -453,7 +434,7 @@ namespace ag_1
             }
         }
 
-        static void salvando()
+        static void salvando() /* Procedimento para salvar as soluções */
         {
             string path = Environment.CurrentDirectory;
             path += "\\melhores_solucoes.xlsx";
