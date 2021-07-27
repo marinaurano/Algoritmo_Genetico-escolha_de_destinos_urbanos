@@ -235,14 +235,16 @@ namespace ag_1
                 for (var j = 1; j <= 35; j++) { v3[j] = mu[i, j]; }
                 soma = 0;
                 for (var j = 1; j <= 35; j++) { soma = soma + Math.Exp(v3[j]); }
-                vprob[i] = Math.Exp(mu[i, vcod[i]]) / soma;
+                //Exponencial da utilidade de cada alternativa sobre o somatório das exponenciais de todas as alternativas.
+                vprob[i] = Math.Exp(mu[i, vcod[i]]) / soma; 
                 if (vprob[i] < 0.00000000001) { vprob[i] = 0.00000000001; }
                 somaprob = somaprob + Math.Log(vprob[i]); 
             }
 
-            return Math.Abs(somaprob); //Retorna o valor absoluto do somaprob. Observe que somaprob é um valor negativo, pois os logaritmos das probabilidades são valores negativos.
-            //Logo, o maior valor de somaprob (máxima verossimilhança) ocorre com o menor valor absoluto de somaprob, que corresponde à função objetivo do AG.
-
+            return Math.Abs(somaprob); //Retorna o valor absoluto do somaprob. Observe que somaprob é um valor negativo, 
+            //pois os logaritmos das probabilidades são valores negativos.
+            //O maior valor de somaprob (máxima verossimilhança) ocorre com o menor valor absoluto de somaprob,
+            //que corresponde à função objetivo do AG.
         //------------------------------------------------------------------------------------------------------------------------------------------
         
         static void selecao()
